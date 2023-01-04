@@ -12,24 +12,79 @@ body {
     animation: gradient 10s ease infinite;
 }
 
-header{
+header {
     display: flex;
+    position: absolute;
     width: 100%;
-    background: #000;
-    height: 80px;
+    height: 50px;
 }
 
-.burger-menu{
+/*
+    BURGER
+*/
+
+.burger-menu {
+    display: flex;
+    position: relative;
     width: 40px;
-    height: 40px;
-    margin: 20px 0 0 20px;
+    height: 25px;
+    margin: 10px 0 0 10px;
+    z-index: 5;
 }
 
-.burger-menu span{
-    background: #fff;
-    width: 10px;
-    height: 10px;
+.setting-menu{
+    background: greenyellow;
+    width: 40%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
 }
+
+.burger-menu.active::after {
+    rotate: -45deg;
+    top: 11px;
+}
+
+.burger-menu.active span{
+    transform: scale(0);
+}
+
+.burger-menu.active::before {
+    rotate: 45deg;
+    top: 11px;
+}
+
+.burger-menu::after,
+.burger-menu::before {
+    content: '';
+    position: absolute;
+    border-radius: 4px;
+    background-color: #000;
+    width: 100%;
+    height: 4px;
+    left: 0;
+    transition: all 0.5s ease;
+}
+
+.burger-menu::before {
+    top: 0;
+}
+
+.burger-menu::after {
+    bottom: 0;
+}
+
+.burger-menu span {
+    background: #000;
+    width: 100%;
+    height: 4px;
+    border-radius: 5px;
+    top: 11px;
+    position: absolute;
+}
+
+
 
 .content {
     display: flex;
