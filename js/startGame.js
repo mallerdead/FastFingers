@@ -2,6 +2,7 @@ const btns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', '
 
 var countOfMistakes = 0;
 var countOfRight = 0;
+var timeStart;
 
 const panel = document.querySelector(".panel")
 
@@ -20,42 +21,53 @@ function DrawKeys(buttonsBar) {
 
 function StartGame(e) {
     if (e.keyCode == 32) {
+        timeStart = Date.now();
         document.removeEventListener("keyup", StartGame);
-        panel.innerHTML = '';
-        panel.insertAdjacentHTML("afterbegin", `<div class="progress-bar"><div class="curtain"></div></div>`)
-        panel.insertAdjacentHTML("beforeend", `<div class="text-bar"></div>`)
+        panel.innerHTML = `<div class="display"><div class="progress-bar"><div class="curtain"></div></div></div><div class="text-bar"></div>`;
         var buttonsBar = document.querySelector(".text-bar");
         DrawKeys(buttonsBar);
         document.addEventListener("keyup", press);
     }
 }
 
-var index = 0;
+
+
+function GameEnd() {
+    panel.innerHTML = `
+    <div class="game-info">
+        <h4>The game is over</h4>
+        <span>Mistakes: ${countOfMistakes}</span>
+        <span>Correct: ${countOfRight}</span>
+        <span>Spent time: ${(Date.now() - timeStart) / 1000}s</span>
+    </div>
+    <div class="hint-start">
+        Press space for restart
+    </div>`;
+    document.removeEventListener("keyup", press);
+    document.addEventListener("keyup", StartGame);
+    countOfMistakes = 0;
+    countOfRight = 0;
+    timeStart = null;
+}
 
 function press(e) {
     var key = 64 < e.keyCode && e.keyCode < 91 ? e.keyCode + 32 : e.keyCode;
     if (96 < key && key < 123) {
         let allButtons = document.getElementsByClassName('game-button');
-        allButtons[index].classList.remove('error-keydown');
-        if (key == allButtons[index].id) {
-            allButtons[index++].classList.add(`correct-button-${getRandomInt(3)}`);
-            countOfRight++;
-            if (allButtons.length == index) {
-                panel.innerHTML = `<div class="hint-start">Press space for restart</div>`;
-                document.removeEventListener("keyup", press);
-                document.addEventListener("keyup", StartGame);
-                index = 0;
-                countOfMistakes = 0;
-                countOfRight = 0;
+        allButtons[countOfRight].classList.remove('error-keydown');
+        if (key == allButtons[countOfRight].id) {
+            allButtons[countOfRight++].classList.add(`correct-button-${getRandomInt(3)}`);
+            if (allButtons.length == countOfRight) {
+                GameEnd();
             }
         }
         else {
             countOfMistakes++;
-            allButtons[index].classList.add('error-keydown');
+            allButtons[countOfRight].classList.add('error-keydown');
             var progressBarLine = document.querySelector(".curtain");
-            progressBarLine.style.left = "-" + (100 - countOfMistakes * 5) + "%";
+            progressBarLine.style.left = `-${(100 - countOfMistakes * 5)}%`;
             if (countOfMistakes > 19) {
-                alert(countOfRight);
+                GameEnd();
             }
         }
     }
